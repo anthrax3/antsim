@@ -152,10 +152,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Ants.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Source.cpp" />
     <ClCompile Include="Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Ants.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="MathFunction.h" />
     <ClInclude Include="Vector2D.h" />
   </ItemGroup>

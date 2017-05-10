@@ -1,43 +1,7 @@
-#include "Game.h"
-#include "Vector2D.h"
+#include <SFML/Graphics.hpp>
 #include "Ants.h"
-#include "Food.h"
+#include "Game.h"
 
-#include <string>
-#include <sstream>
-#include <stdlib.h>
-
-#define ANT_COUNT 100
-
-
-Game::Game(int w, int h)
-	:
-	window(sf::VideoMode(w, h), "swarm intelligence"),
-	Screen_width(w),
-	Screen_height(h)
-	
-{
-	window.setFramerateLimit(60);
-	m_Background.loadFromFile("images/background.jpg");
-	m_Background.setSmooth(true);
-	Background.setTexture(m_Background);
-	//create  AI ants
-	for (int i = 0; i < ANT_COUNT; i++)
-	{
-		ants.push_back(new Ants(this));
-	}
-
-
-}
-
-Game::~Game()
-{
-	while (ants.size() > 0)
-	{
-		delete ants.back();
-		ants.pop_back();
-	}
-}
 
 void Game::gameloop()
 {
@@ -46,37 +10,41 @@ void Game::gameloop()
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
-			//close window
 			if (event.type == sf::Event::Closed)
-			{
 				window.close();
-			}
 		}
 
-		update();
 		draw();
-	}
-}
-
-void Game::update()
-{
-	for (int i = 0; i < ants.size(); i++)
-	{
-		ants[i]->update();
+		
 	}
 
 }
 
 void Game::draw()
 {
+	
 	window.clear();
-	window.draw(Background);
-
-	for (int i = 0; i < ants.size(); i++)
+	for(auto a: ants)
 	{
-		ants[i]->draw();
+		a->draw(window);
+		a->update();
 	}
 	
-	
 	window.display();
+}
+
+Game::Game(int width, int height)
+	:
+	window(sf::VideoMode(width, height), "ANTSIMULATION"),
+	SCREEN_WIDTH(width),
+	SCREEN_HEIGHT(height)
+{
+	window.setFramerateLimit(60);
+
+	//spawn ants here
+	for (int i = 0; i < 20; i++)
+	{
+		ants.push_back(new Ants(10, Vector2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)));
+	}
+
 }

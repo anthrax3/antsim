@@ -1,32 +1,17 @@
-#ifndef GAME_H
-#define GAME_H
-
-class Ants;
-class Food;
-
-#include <SFML/Graphics.hpp>
-#include <vector>
-#include "MathFunction.h"
-
-
+#pragma once
+#include "Ants.h"]
+#include <list>
 
 class Game
 {
 public:
-	sf::RenderWindow window;
-	sf::Texture m_Background;
-	sf::Sprite Background;
-	std::vector<Ants*> ants;
-
-	Game(int w, int h);
-	~Game();
-
+	Game( int width, int height);
 	void gameloop();
-	void update();
 	void draw();
 
-	float Screen_width;
-	float Screen_height;
+private:
+	 sf::RenderWindow window;
+	 int SCREEN_WIDTH;
+	 int SCREEN_HEIGHT;
+	 std::list<Ants*>ants;
 };
-
-#endif
