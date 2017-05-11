@@ -17,8 +17,9 @@ public:
 	//Determine the random wander motion
 	Vector2D wander();
 	void update();
-	bool Has_food(Ants * ants,Food *food);
+	bool Has_food(Food *food);
 	void followtrail();
+	Vector2D seeking(Food *target);
 	void draw(sf::RenderWindow& app);
 
 private:

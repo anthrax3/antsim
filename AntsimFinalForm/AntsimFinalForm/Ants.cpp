@@ -23,27 +23,26 @@ Ants::Ants(float radius, Vector2D& pos)
 
 Vector2D Ants::wander()
 {
-	float Circle_distance = 10;
-	float Circle_radius = 20;
-	Vector2D Circle_Centre = velocity;
-	Circle_Centre.normalize();
-	Circle_Centre*Circle_distance;
+		float Circle_distance = 10;
+		float Circle_radius = 20;
+		Vector2D Circle_Centre = velocity;
+		Circle_Centre.normalize();
+		Circle_Centre*Circle_distance;
 
-	Vector2D displacement(0, -1);
-	displacement*Circle_radius;
-	float length = pointDistance(0, 0, displacement.getX(), displacement.getY());
-	displacement.setVec2D(cosf(Wander_angle*PI / 180) / length, -sinf(Wander_angle*PI / 180) / length);
+		Vector2D displacement(1, -1);
+		displacement*Circle_radius;
+		float length = pointDistance(0, 0, displacement.getX(), displacement.getY());
+		displacement.setVec2D(cosf(Wander_angle*PI / 180) / length, -sinf(Wander_angle*PI / 180) / length);
 
 
-	Wander_angle += divf((rand() % 10 - rand() % 10), 10) *Wander_difference;
+		Wander_angle += divf((rand() % 10 - rand() % 10), 10) *Wander_difference;
 
-	return Circle_Centre + displacement;
+		return Circle_Centre + displacement;
 }
 
 void Ants::update()
 {
-	if (!hasfood)
-	{
+	
 		Vector2D wand = wander();
 		velocity += wand;
 		velocity.truncate(Max_Speed);
@@ -57,16 +56,34 @@ void Ants::update()
 		{
 			phermon_trail.empty();
 		}*/
-	}
-	
+
+	/*	if (position.getY()<= 0+50)
+		{
+			velocity *= -1;
+			position += velocity;
+		}
+		if (position.getY() <= 900-50)
+		{
+			velocity *= -1;
+			position += velocity;
+		}
+		if (position.getX() <= 0 + 50)
+		{
+			velocity *= -1;
+			position += velocity;
+		}
+		if (position.getX() <= 0 + 1400-0)
+		{
+			velocity *=- 1;
+			position += velocity;
+		}*/
 }
 
-bool Ants::Has_food(Ants * ants,Food * food)
+bool Ants::Has_food(Food * food)
 {
-	if (   ants->position.getX() + ants->Ant_Radius >= food->food_pos.getX() - food->Detect_radius
-		&& ants->position.getX() - ants->Ant_Radius >= food->food_pos.getX() + food->Detect_radius
-		&& ants->position.getY() + ants->Ant_Radius >= food->food_pos.getY() - food->Detect_radius
-		&& ants->position.getY() - ants->Ant_Radius >= food->food_pos.getY() + food->Detect_radius)
+	float radi = Ant_Radius + food->Detect_radius;
+	Vector2D distar = { food->getpos() - position };
+	if (std::abs (distar.getX())<= radi && std::abs (distar.getY()) <= radi)
 
 	{
 		hasfood = true;
@@ -89,6 +106,18 @@ void Ants::followtrail()
 			position.setY(f_trail->getY());
 			//body.setPosition(f_trail->getX() - Ant_Radius, f_trail->getY() - Ant_Radius);
 		}
+}
+
+Vector2D Ants::seeking(Food * target)
+{
+	Vector2D desired = target->getpos() - position;
+	desired.normalize();
+	desired*Max_Speed;
+
+	Vector2D steering = desired - velocity;
+	steering.truncate(Max_Speed);
+	velocity += steering;
+	return steering;
 }
 
 void Ants::draw(sf::RenderWindow & app)
@@ -114,7 +143,13 @@ void Ants::draw(sf::RenderWindow & app)
 		sf::Vertex(sf::Vector2f(position.getX() + (cosf(Wander_angle*PI/180) * length),position.getY() + (-sinf(Wander_angle*PI / 180) * length)),
 			sf::Color::Red)};
 
+	/*sf::Transform t;
+	Vector2D trans = velocity;
+	float angleR = pointDirection(velocity.getX(), velocity.getY(),position.getX(), position.getY());
+	t.rotate(angleR *  180/PI, position.getX(), position.getY());*/
+
 	//app.draw(trail);
+	//body.rotate(45);
 	app.draw(body);
 	app.draw(line, 4, sf::Lines);
 }

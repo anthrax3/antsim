@@ -8,6 +8,7 @@ int main()
 	//Start Game
 	Game game(1400, 900);
 	game.gameloop();
+	game.update();
 
 	//Return Success
 	return 0;

@@ -16,6 +16,7 @@ private:
 	 int SCREEN_WIDTH;
 	 int SCREEN_HEIGHT;
 	 std::list<Ants*>ants;
-	 Ants *a;
-	 Food *food;
+	 //Ants *a;
+	 std::list<Food*>food;
+	 
 };

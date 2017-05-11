@@ -11,9 +11,20 @@ void Game::gameloop()
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
+			{
 				window.close();
+			}
+
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				Vector2D mousepos(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+				Food* f = new Food(10, 80, mousepos);
+				food.push_back(f);
+			}
 
 		}
+
+		
 
 		update();
 		draw();
@@ -32,22 +43,26 @@ void Game::draw()
 		a->draw(window);
 		a->update();
 	}
-	food->draw(window);
+	for(auto f: food)
+	{
+		f->draw(window);
+	}
 	window.display();
 }
 
 void Game::update()
 {
-	/*for (auto i = ants.begin(); i != ants.end();)
+	for (auto a : ants)
 	{
-		Ants *e = *i;*/
-		//if (a->Has_food(a,food))
-		//{
-		//	a->followtrail();
-		//}
+		for (auto f : food)
+		{
+			if (a->Has_food(f))
+			{
+				a->seeking(f);
+			}
+		}
+	}
 
-		//a->update();
-	//}
 }
 
 Game::Game(int width, int height)
@@ -59,12 +74,9 @@ Game::Game(int width, int height)
 	window.setFramerateLimit(60);
 
 	//spawn ants here
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 20; i++)
 	{
 		ants.push_back(new Ants(10, Vector2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)));
 	}
 	
-	//spawn food
-	Vector2D fpos(0, 0);
-	food = new Food(10, 10, fpos);
 }
