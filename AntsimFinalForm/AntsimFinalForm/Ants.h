@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Vector2D.h"
 #include <vector>
+#include "Food.h"
 #include <list>
 #include "MathFunction.h"
 
@@ -16,6 +17,8 @@ public:
 	//Determine the random wander motion
 	Vector2D wander();
 	void update();
+	bool Has_food(Ants * ants,Food *food);
+	void followtrail();
 	void draw(sf::RenderWindow& app);
 
 private:
@@ -30,7 +33,7 @@ private:
 	float Ant_Radius;
 	float Max_Speed;
 
-	bool Has_food;
+	bool hasfood;
 
 	sf::CircleShape  body;
 	sf::CircleShape  trail;

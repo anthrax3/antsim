@@ -1,26 +1,22 @@
 #include "Food.h"
-#include "Game.h"
 
 #define FOOD_RADIUS 100
 
-Food::Food(Game * manager)
+
+Food::Food(int fval, int radius, Vector2D & pos)
 	:
-	f_manager(manager),
-	d_food(FOOD_RADIUS)
+	Food_value(fval),
+	Detect_radius(radius),
+	food_pos(pos),
+	d_food(radius)
 {
-
-	if (f_manager == nullptr)
-	{
-		return;
-	}
 	d_food.setFillColor(sf::Color::Yellow);
-	food_pos.setX(500 - FOOD_RADIUS);
-	food_pos.setY(500 -	FOOD_RADIUS);
-
 }
 
-void Food::draw()
+void Food::draw(sf::RenderWindow &app)
 {
-	d_food.setPosition(food_pos.getX(), food_pos.getY());
-	f_manager->window.draw(d_food);
+	d_food.setPosition(food_pos.getX() - Detect_radius, food_pos.getY() - Detect_radius);
+	//d_food.tr(food_pos.getX() , food_pos.getY());
+
+	app.draw(d_food);
 }
