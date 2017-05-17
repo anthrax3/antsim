@@ -20,7 +20,10 @@ public:
 	//moves or seeks a given co-ordinate/ vector point
 	Vector2D seeking(Vector2D &targetPos);
 
-	void update();
+	//avoid colission with other memberrs
+	Vector2D seperate(std::list<Ants*> members);
+
+	void update(Vector2D & force);
 	void followtrail();
 	void draw(sf::RenderWindow& app);
 

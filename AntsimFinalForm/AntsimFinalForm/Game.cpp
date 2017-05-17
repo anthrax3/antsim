@@ -45,7 +45,8 @@ void Game::update()
 {
 	for (auto a : ants)
 	{
-		a->update();
+		a->update(a->wander());
+		a->update(a->seperate(ants));
 	}
 
 }
@@ -59,9 +60,9 @@ Game::Game(int width, int height)
 	window.setFramerateLimit(60);
 
 	//spawn ants here
-	for (int i = 0; i < 20; i++)
+	for (int i = 0; i < 100; i++)
 	{
-		ants.push_back(new Ants(10, Vector2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)));
+		ants.push_back(new Ants(10, Vector2D(std::rand() %SCREEN_WIDTH , std::rand() %SCREEN_HEIGHT)));
 	}
 	
 }

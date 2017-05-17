@@ -41,11 +41,50 @@ Vector2D Ants::wander()
 		return Circle_Centre + displacement;
 }
 
-void Ants::update()
+Vector2D Ants::seperate(std::list<Ants*> members)
+{
+	float desiredseperation = Ant_Radius * 3;
+	Vector2D sum;
+	int count = 0;
+
+	for (Ants* other : members)
+	{
+		float d = pointDistance(position.getX(), position.getY(), other->position.getX(), other->position.getY());
+		
+		if ((d > 0) && (d < desiredseperation))
+		{
+			Vector2D diff = (other->position - position);
+
+			diff.normalize();
+
+			diff /= d;
+
+			sum += diff;
+
+			count++;
+		}
+	}
+
+	if (count > 0)
+	{
+		sum /= count;
+		sum.normalize();
+		sum *= Max_Speed;
+		Vector2D steer = velocity - sum;
+		steer.truncate(Max_Speed);
+		return Vector2D(steer);
+	}
+	else
+	{
+		return Vector2D(0, 0);
+	}
+}
+
+void Ants::update(Vector2D & force)
 {
 	
-		Vector2D wand = wander();
-		velocity += wand;
+	
+		velocity += force;
 		velocity.truncate(Max_Speed);
 		position += velocity;
 
