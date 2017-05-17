@@ -1,6 +1,5 @@
 #pragma once
 #include "Ants.h"
-#include "Food.h"
 #include <list>
 
 class Game
@@ -15,8 +14,5 @@ private:
 	 sf::RenderWindow window;
 	 int SCREEN_WIDTH;
 	 int SCREEN_HEIGHT;
-	 std::list<Ants*>ants;
-	 //Ants *a;
-	 std::list<Food*>food;
-	 
+	 std::list<Ants*>ants;	 
 };

@@ -1,5 +1,6 @@
 #include "Ants.h"
 #include <cmath>
+#include "Game.h"
 
 Ants::Ants(float radius, Vector2D& pos)
 	:
@@ -57,45 +58,24 @@ void Ants::update()
 			phermon_trail.empty();
 		}*/
 
-	/*	if (position.getY()<= 0+50)
+		if (position.getY()< 0)
 		{
-			velocity *= -1;
-			position += velocity;
+			position.setY(900);
 		}
-		if (position.getY() <= 900-50)
+		if (position.getY() > 900)
 		{
-			velocity *= -1;
-			position += velocity;
+			position.setY(0);
 		}
-		if (position.getX() <= 0 + 50)
+		if (position.getX() < 0 )
 		{
-			velocity *= -1;
-			position += velocity;
+			position.setX(1400);
 		}
-		if (position.getX() <= 0 + 1400-0)
+		if (position.getX() > 1400)
 		{
-			velocity *=- 1;
-			position += velocity;
-		}*/
+			position.setX(0);
+		}
 }
 
-bool Ants::Has_food(Food * food)
-{
-	float radi = Ant_Radius + food->Detect_radius;
-	Vector2D distar = { food->getpos() - position };
-	if (std::abs (distar.getX())<= radi && std::abs (distar.getY()) <= radi)
-
-	{
-		hasfood = true;
-		return true;
-	}
-
-	else
-	{
-		return false;
-	}
-
-}
 
 void Ants::followtrail()
 {
@@ -108,9 +88,9 @@ void Ants::followtrail()
 		}
 }
 
-Vector2D Ants::seeking(Food * target)
+Vector2D Ants::seeking(Vector2D &targetPos)
 {
-	Vector2D desired = target->getpos() - position;
+	Vector2D desired = targetPos - position;
 	desired.normalize();
 	desired*Max_Speed;
 

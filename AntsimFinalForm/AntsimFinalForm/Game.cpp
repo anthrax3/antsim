@@ -17,19 +17,14 @@ void Game::gameloop()
 
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
-				Vector2D mousepos(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
-				Food* f = new Food(10, 80, mousepos);
-				food.push_back(f);
+				
 			}
 
 		}
 
-		
-
 		update();
 		draw();
-		
-		
+
 	}
 
 }
@@ -41,11 +36,7 @@ void Game::draw()
 	for(auto a: ants)
 	{
 		a->draw(window);
-		a->update();
-	}
-	for(auto f: food)
-	{
-		f->draw(window);
+		
 	}
 	window.display();
 }
@@ -54,13 +45,7 @@ void Game::update()
 {
 	for (auto a : ants)
 	{
-		for (auto f : food)
-		{
-			if (a->Has_food(f))
-			{
-				a->seeking(f);
-			}
-		}
+		a->update();
 	}
 
 }

@@ -2,10 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include "Vector2D.h"
 #include <vector>
-#include "Food.h"
 #include <list>
 #include "MathFunction.h"
 
+class Game;
 
 class Ants
 {
@@ -16,10 +16,12 @@ public:
 
 	//Determine the random wander motion
 	Vector2D wander();
+
+	//moves or seeks a given co-ordinate/ vector point
+	Vector2D seeking(Vector2D &targetPos);
+
 	void update();
-	bool Has_food(Food *food);
 	void followtrail();
-	Vector2D seeking(Food *target);
 	void draw(sf::RenderWindow& app);
 
 private:
@@ -38,5 +40,7 @@ private:
 
 	sf::CircleShape  body;
 	sf::CircleShape  trail;
+
+	//Game *dimensions;
 	
 };
