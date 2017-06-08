@@ -14,5 +14,5 @@ private:
 	 sf::RenderWindow window;
 	 int SCREEN_WIDTH;
 	 int SCREEN_HEIGHT;
-	 std::list<Ants*>ants;	 
+	 std::list<Ants*>ants;
 };

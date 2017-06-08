@@ -72,12 +72,16 @@ Vector2D Ants::seperate(std::list<Ants*> members)
 		sum *= Max_Speed;
 		Vector2D steer = velocity - sum;
 		steer.truncate(Max_Speed);
+
+		velocity += steer;
 		return Vector2D(steer);
 	}
 	else
 	{
 		return Vector2D(0, 0);
 	}
+
+	
 }
 
 void Ants::update(Vector2D & force)
