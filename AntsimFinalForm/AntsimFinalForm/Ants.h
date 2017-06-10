@@ -4,46 +4,50 @@
 #include <vector>
 #include <list>
 #include "MathFunction.h"
-
-class Game;
+ 
 
 class Ants
 {
 
 public:
 	
+	//constructor
 	Ants(float radius, Vector2D& pos);
 
 	//Determine the random wander motion
 	Vector2D wander();
 
-	//moves or seeks a given co-ordinate/ vector point
-	Vector2D seeking(Vector2D &targetPos);
-
 	//avoid colission with other memberrs
 	Vector2D seperate(std::list<Ants*> members);
 
-	void update(Vector2D & force);
-	void followtrail();
+	//alignment function with other memners
+	Vector2D align(std::list<Ants*> members);
+
+	//cohesive behaviour in relation to other members
+	Vector2D cohesion (std::list<Ants*>members);
+
+	//applys behaviour 
+	void applyBehaviour(std::list<Ants*>members);
+
+	//updates every member
+	void update(std::list<Ants*> members);
+
+	//draws members
 	void draw(sf::RenderWindow& app);
 
 private:
 
 	Vector2D position;
 	Vector2D velocity;
+	Vector2D acceleration;
 
-	std::vector<Vector2D*> phermon_trail;
+	float Wander_angle; //wander angle
+	float Wander_difference; //wandering angle difference
+	float Ant_Radius; //radius of memebrs
+	float Max_Speed; //max speed of members
 
-	float Wander_angle;
-	float Wander_difference;
-	float Ant_Radius;
-	float Max_Speed;
+	sf::CircleShape  body;  //draws body shape
 
-	bool hasfood;
 
-	sf::CircleShape  body;
-	sf::CircleShape  trail;
-
-	//Game *dimensions;
 	
 };

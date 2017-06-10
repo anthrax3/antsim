@@ -8,30 +8,29 @@ Ants::Ants(float radius, Vector2D& pos)
 	Wander_difference(20.0f),
 	Ant_Radius(radius),
 	Max_Speed(2.0f),
-	hasfood(false),
 	position(pos),
-	body(radius)
-	//trail(radius/2)
+	body(radius),
+	acceleration(Vector2D(0,0))
 {
+	//sets start velocity
 	velocity.setX(cosf(Wander_angle* PI/180)*Max_Speed);
 	velocity.setY(-sinf(Wander_angle* PI / 180)*Max_Speed);
-
-	body.setFillColor(sf::Color::Cyan);
-	trail.setFillColor(sf::Color::Transparent);
-	trail.setOutlineThickness(1);
-	trail.setOutlineColor(sf::Color::Red);
+	
+	//fill body color
+	body.setFillColor(sf::Color::White);
 }
 
 Vector2D Ants::wander()
 {
-		float Circle_distance = 10;
-		float Circle_radius = 20;
+		float Circle_distance = 5;
+		float Circle_radius = 3;
+
 		Vector2D Circle_Centre = velocity;
 		Circle_Centre.normalize();
-		Circle_Centre*Circle_distance;
+		Circle_Centre *= Circle_distance;
 
 		Vector2D displacement(1, -1);
-		displacement*Circle_radius;
+		displacement *= Circle_radius;
 		float length = pointDistance(0, 0, displacement.getX(), displacement.getY());
 		displacement.setVec2D(cosf(Wander_angle*PI / 180) / length, -sinf(Wander_angle*PI / 180) / length);
 
@@ -53,28 +52,17 @@ Vector2D Ants::seperate(std::list<Ants*> members)
 		
 		if ((d > 0) && (d < desiredseperation))
 		{
-			Vector2D diff = (other->position - position);
-
-			diff.normalize();
-
-			diff /= d;
-
-			sum += diff;
-
+			sum += other->position - position;
 			count++;
 		}
 	}
 
 	if (count > 0)
 	{
-		sum /= count;
+		sum = sum/ count;
+		sum = sum * -1;
 		sum.normalize();
-		sum *= Max_Speed;
-		Vector2D steer = velocity - sum;
-		steer.truncate(Max_Speed);
-
-		velocity += steer;
-		return Vector2D(steer);
+		return sum;
 	}
 	else
 	{
@@ -84,63 +72,111 @@ Vector2D Ants::seperate(std::list<Ants*> members)
 	
 }
 
-void Ants::update(Vector2D & force)
+Vector2D Ants::align(std::list<Ants*> members)
 {
-	
-	
-		velocity += force;
-		velocity.truncate(Max_Speed);
-		position += velocity;
+	float neighbordist = 50; //an arbetery value 
+	Vector2D sum(0, 0);
+	int count = 0; //to keep track of other members
 
-		//set trail location 
+	for (Ants* other : members)
+	{
+		float d = pointDistance(position.getX(), position.getY(), other->position.getX(), other->position.getY());
+		if ((d > 0) && (d < neighbordist))
+		{
+			sum += other->velocity;
+			count++;
+		}
+	}
 
-		/*Vector2D *ptrail = new Vector2D(position);
-		phermon_trail.push_back(ptrail);
-		if(phermon_trail.size() >= 300)
-		{
-			phermon_trail.empty();
-		}*/
+	if (count > 0)
+	{
+		sum = sum / count;
+		sum.normalize();
+		return sum;
+	}
 
-		if (position.getY()< 0)
-		{
-			position.setY(900);
-		}
-		if (position.getY() > 900)
-		{
-			position.setY(0);
-		}
-		if (position.getX() < 0 )
-		{
-			position.setX(1400);
-		}
-		if (position.getX() > 1400)
-		{
-			position.setX(0);
-		}
+	else
+	{
+		return Vector2D(0, 0); //if no neighbour b=found return 0;
+	}
 }
 
-
-void Ants::followtrail()
+Vector2D Ants::cohesion(std::list<Ants*> members)
 {
-		for (int i = phermon_trail.size(); i >= 0; i--)
+	float neighbourdist = 50;
+	Vector2D sum(0, 0);
+	int count = 0;
+
+	for (Ants* other : members)
+	{
+		float d = pointDistance(position.getX(), position.getY(), other->position.getX(), other->position.getY());
+
+		if ((d > 0) && (d < neighbourdist))
 		{
-			Vector2D *f_trail = phermon_trail[i];
-			position.setX(f_trail->getX());
-			position.setY(f_trail->getY());
-			//body.setPosition(f_trail->getX() - Ant_Radius, f_trail->getY() - Ant_Radius);
+			sum += other->position; //adding all member position
+			count++;
 		}
+	}
+
+	if (count > 0)
+	{
+		sum /= count;
+		Vector2D seek(sum.getX() - position.getX(), sum.getY() - position.getY() );
+		seek.normalize();
+		return seek;
+	}
+	else
+	{
+		return Vector2D(0,0);
+	}
 }
 
-Vector2D Ants::seeking(Vector2D &targetPos)
+void Ants::applyBehaviour(std::list<Ants*> members)
 {
-	Vector2D desired = targetPos - position;
-	desired.normalize();
-	desired*Max_Speed;
+	Vector2D sep = seperate(members);
+	Vector2D ali = align(members);
+	Vector2D coh = cohesion(members);
 
-	Vector2D steering = desired - velocity;
-	steering.truncate(Max_Speed);
-	velocity += steering;
-	return steering;
+	sep *= 10.0;     //
+	ali *= 10.0;       //          tweek this value for priorities
+	coh *= 0.1;      //
+
+
+	acceleration += sep + ali + coh;
+	velocity += acceleration;
+	velocity.truncate(Max_Speed);
+	acceleration *= 0;
+}
+
+void Ants::update(std::list<Ants*> members)
+{
+	
+	Vector2D wan = wander();
+
+	
+	acceleration += wan ;
+	velocity += acceleration;
+	velocity.truncate(Max_Speed);
+	position += velocity;
+	acceleration *= 0;
+
+
+	if (position.getY()< 0)
+	{
+		position.setY(900);
+	}
+	if (position.getY() > 900)
+	{
+		position.setY(0);
+	}
+	if (position.getX() < 0 )
+	{
+		position.setX(1400);
+	}
+	if (position.getX() > 1400)
+	{
+		position.setX(0);
+	}
 }
 
 void Ants::draw(sf::RenderWindow & app)
@@ -149,30 +185,5 @@ void Ants::draw(sf::RenderWindow & app)
 	body.setPosition(position.getX() - Ant_Radius, position.getY() - Ant_Radius);
 	float length = velocity.length()* 5;
 
-
-	//draw trails
-
-	/*for (int i = 0; i <phermon_trail.size();i++)
-	{
-		Vector2D *f_trail = phermon_trail[i];
-		trail.setPosition(f_trail->getX() - Ant_Radius, f_trail->getY() - Ant_Radius);
-		app.draw(trail);
-		app.clear();
-
-	}*/
-
-	sf::Vertex line[] = { 
-		sf::Vertex(sf::Vector2f(position.getX() , position.getY()), sf::Color::Red),
-		sf::Vertex(sf::Vector2f(position.getX() + (cosf(Wander_angle*PI/180) * length),position.getY() + (-sinf(Wander_angle*PI / 180) * length)),
-			sf::Color::Red)};
-
-	/*sf::Transform t;
-	Vector2D trans = velocity;
-	float angleR = pointDirection(velocity.getX(), velocity.getY(),position.getX(), position.getY());
-	t.rotate(angleR *  180/PI, position.getX(), position.getY());*/
-
-	//app.draw(trail);
-	//body.rotate(45);
 	app.draw(body);
-	app.draw(line, 4, sf::Lines);
 }
